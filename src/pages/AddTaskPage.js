@@ -1,5 +1,4 @@
-//AddTaskPage.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 const AddTaskPage = () => {
@@ -11,69 +10,8 @@ const AddTaskPage = () => {
     const [selectedDosage, setSelectedDosage] = useState('');
     const [intervalType, setIntervalType] = useState('');
     const [intervalValue, setIntervalValue] = useState('');
-    const [selectedFrequencyCount, setSelectedFrequencyCount] = useState(1);
-    const [selectedTimes, setSelectedTimes] = useState(Array.from({ length: 1 }, () => ({ time: '', dosage: '' })));
-    const [medications, setMedications] = useState([]);
-
-    useEffect(() => {
-        // APIからお薬のデータを取得する
-        axios.get('http://localhost:8080/api/medications')
-            .then(response => {
-                // レスポンスからお薬のデータを取得してstateに設定する
-                setMedications(response.data);
-            })
-            .catch(error => {
-                console.error('お薬の取得中にエラーが発生しました:', error);
-            });
-    }, []); // []を渡すことで初回のレンダリング時にのみ呼び出される
-
-    const handleTaskNameChange = (e) => {
-        setTaskName(e.target.value);
-    };
-
-    const handleUnitChange = (e) => {
-        setUnit(e.target.value);
-    };
-
-    const handleFrequencyChange = (selectedFrequency) => {
-        setFrequency(selectedFrequency);
-        setSelectedDays([]);
-        setSelectedTime('');
-        setSelectedDosage('');
-        setIntervalType('');
-        setIntervalValue('');
-    };
-
-    const handleDaySelect = (day) => {
-        if (selectedDays.includes(day)) {
-            setSelectedDays(selectedDays.filter(selectedDay => selectedDay !== day));
-        } else {
-            setSelectedDays([...selectedDays, day]);
-        }
-    };
-
-    const handleTimeChange = (index, value) => {
-        const updatedTimes = [...selectedTimes];
-        updatedTimes[index].time = value;
-        setSelectedTimes(updatedTimes);
-    };
-
-    const handleDosageChange = (index, value) => {
-        const updatedTimes = [...selectedTimes];
-        updatedTimes[index].dosage = value;
-        setSelectedTimes(updatedTimes);
-    };
-
-    const handleIntervalTypeChange = (type) => {
-        setIntervalType(type);
-    };
-
-    const handleIntervalValueChange = (e) => {
-        setIntervalValue(e.target.value);
-    };
 
     const handleAddTask = () => {
-        // タスクを追加する処理を実装する
         const newTask = {
             name: taskName,
             unit,
@@ -83,8 +21,6 @@ const AddTaskPage = () => {
             selectedDosage,
             intervalType,
             intervalValue,
-            selectedFrequencyCount,
-            selectedTimes,
         };
 
         // 新しいタスクをAPIに送信する
@@ -98,19 +34,18 @@ const AddTaskPage = () => {
             });
     };
 
-
     return (
         <div>
             <h1>タスクの追加ページ</h1>
             <label>
                 薬の名前：
-                <input type="text" value={taskName} onChange={handleTaskNameChange} />
+                <input type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} />
             </label>
             <label>
                 単位：
-                <input type="text" value={unit} onChange={handleUnitChange} />
+                <input type="text" value={unit} onChange={(e) => setUnit(e.target.value)} />
             </label>
-            <label>
+            <div>          <label>
                 頻度：
                 <div>
                     <input
@@ -119,9 +54,9 @@ const AddTaskPage = () => {
                         name="frequency"
                         value="daily"
                         checked={frequency === 'daily'}
-                        onChange={() => handleFrequencyChange('daily')}
+                        onChange={() => setFrequency('daily')}
                     />
-                    <label htmlFor="daily">一日何回か</label>
+                    <label htmlFor="daily">毎日複数回</label>
                 </div>
                 <div>
                     <input
@@ -130,9 +65,9 @@ const AddTaskPage = () => {
                         name="frequency"
                         value="weekly"
                         checked={frequency === 'weekly'}
-                        onChange={() => handleFrequencyChange('weekly')}
+                        onChange={() => setFrequency('weekly')}
                     />
-                    <label htmlFor="weekly">特定の曜日か</label>
+                    <label htmlFor="weekly">特定の曜日</label>
                 </div>
                 <div>
                     <input
@@ -141,30 +76,18 @@ const AddTaskPage = () => {
                         name="frequency"
                         value="hourly"
                         checked={frequency === 'hourly'}
-                        onChange={() => handleFrequencyChange('hourly')}
+                        onChange={() => setFrequency('hourly')}
                     />
                     <label htmlFor="hourly">間隔</label>
                 </div>
-            </label>
+            </label></div>
+
             {frequency === 'daily' && (
                 <div>
                     <label>摂取回数：</label>
-                    <select value={selectedFrequencyCount} onChange={(e) => setSelectedFrequencyCount(parseInt(e.target.value))}>
-                        {[1, 2, 3, 4].map((count) => (
-                            <option key={count} value={count}>
-                                {count}
-                            </option>
-                        ))}
-                    </select>
-                    {/* 以下が追加する部分 */}
-                    {Array.from({ length: selectedFrequencyCount }, (_, index) => (
-                        <div key={index}>
-                            <label>時間 {index + 1}：</label>
-                            <input type="time" value={selectedTimes[index].time} onChange={(e) => handleTimeChange(index, e.target.value)} />
-                            <label> 錠剤数：</label>
-                            <input type="number" value={selectedTimes[index].dosage} onChange={(e) => handleDosageChange(index, e.target.value)} />
-                        </div>
-                    ))}
+                    <input type="number" value={selectedDosage} onChange={(e) => setSelectedDosage(e.target.value)} />
+                    <label>いつ思い出させたいですか？：</label>
+                    <input type="time" value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)} />
                 </div>
             )}
 
@@ -172,20 +95,22 @@ const AddTaskPage = () => {
                 <div>
                     <label>選択した曜日：</label>
                     <div>
-                        <button className={selectedDays.includes('月') ? 'selected' : ''} onClick={() => handleDaySelect('月')}>月曜日</button>
-                        <button className={selectedDays.includes('火') ? 'selected' : ''} onClick={() => handleDaySelect('火')}>火曜日</button>
-                        <button className={selectedDays.includes('水') ? 'selected' : ''} onClick={() => handleDaySelect('水')}>水曜日</button>
-                        <button className={selectedDays.includes('木') ? 'selected' : ''} onClick={() => handleDaySelect('木')}>木曜日</button>
-                        <button className={selectedDays.includes('金') ? 'selected' : ''} onClick={() => handleDaySelect('金')}>金曜日</button>
-                        <button className={selectedDays.includes('土') ? 'selected' : ''} onClick={() => handleDaySelect('土')}>土曜日</button>
-                        <button className={selectedDays.includes('日') ? 'selected' : ''} onClick={() => handleDaySelect('日')}>日曜日</button>
+                        <button className={selectedDays.includes('月') ? 'selected' : ''} onClick={() => setSelectedDays([...selectedDays, '月'])}>月曜日</button>
+                        <button className={selectedDays.includes('火') ? 'selected' : ''} onClick={() => setSelectedDays([...selectedDays, '火'])}>火曜日</button>
+                        <button className={selectedDays.includes('水') ? 'selected' : ''} onClick={() => setSelectedDays([...selectedDays, '水'])}>水曜日</button>
+                        <button className={selectedDays.includes('木') ? 'selected' : ''} onClick={() => setSelectedDays([...selectedDays, '木'])}>木曜日</button>
+                        <button className={selectedDays.includes('金') ? 'selected' : ''} onClick={() => setSelectedDays([...selectedDays, '金'])}>金曜日</button>
+                        <button className={selectedDays.includes('土') ? 'selected' : ''} onClick={() => setSelectedDays([...selectedDays, '土'])}>土曜日</button>
+                        <button className={selectedDays.includes('日') ? 'selected' : ''} onClick={() => setSelectedDays([...selectedDays, '日'])}>日曜日</button>
                     </div>
+                    <label>いつ思い出させたいですか？：</label>
+                    <input type="time" value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)} />
                 </div>
             )}
+
             {frequency === 'hourly' && (
                 <div>
-                    <label>間隔の
-                        種類：</label>
+                    <label>間隔の種類：</label>
                     <div>
                         <input
                             type="radio"
@@ -193,7 +118,7 @@ const AddTaskPage = () => {
                             name="intervalType"
                             value="hour"
                             checked={intervalType === 'hour'}
-                            onChange={() => handleIntervalTypeChange('hour')}
+                            onChange={() => setIntervalType('hour')}
                         />
                         <label htmlFor="hour">時間ごと</label>
                         <input
@@ -202,30 +127,25 @@ const AddTaskPage = () => {
                             name="intervalType"
                             value="day"
                             checked={intervalType === 'day'}
-                            onChange={() => handleIntervalTypeChange('day')}
+                            onChange={() => setIntervalType('day')}
                         />
                         <label htmlFor="day">日ごと</label>
                     </div>
                     {intervalType && (
                         <div>
                             <label>通知の頻度：</label>
-                            <input type="number" value={intervalValue} onChange={handleIntervalValueChange} />
+                            <input type="number" value={intervalValue} onChange={(e) => setIntervalValue(e.target.value)} />
+                            <label>開始時間：</label>
+                            <input type="time" value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)} />
+                            <label>終了時間：</label>
+                            <input type="time" value={selectedDosage} onChange={(e) => setSelectedDosage(e.target.value)} />
+                            <label>用量：</label>
+                            <input type="number" value={selectedDosage} onChange={(e) => setSelectedDosage(e.target.value)} />
                         </div>
                     )}
                 </div>
             )}
-            {selectedDays.length > 0 && (
-                <div>
-                    <label>時間：</label>
-                    <input type="time" value={selectedTime} onChange={handleTimeChange} />
-                </div>
-            )}
-            {selectedTime && (
-                <div>
-                    <label>何錠：</label>
-                    <input type="number" value={selectedDosage} onChange={handleDosageChange} />
-                </div>
-            )}
+
             <button onClick={handleAddTask}>タスクを追加</button>
         </div>
     );
