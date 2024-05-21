@@ -1,3 +1,5 @@
+//AddTaskPage
+
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -10,6 +12,7 @@ const AddTaskPage = () => {
     const [selectedDosage, setSelectedDosage] = useState('');
     const [intervalType, setIntervalType] = useState('');
     const [intervalValue, setIntervalValue] = useState('');
+    const [taskAdded, setTaskAdded] = useState(false); // 新しいステート追加：タスクが追加されたかどうかを示す
 
     const handleAddTask = () => {
         const newTask = {
@@ -23,11 +26,10 @@ const AddTaskPage = () => {
             intervalValue,
         };
 
-        // 新しいタスクをAPIに送信する
         axios.post('http://localhost:8080/api/tasks', newTask)
             .then(response => {
-                // タスクの追加が成功したら、ページを更新する
-                window.location.reload();
+                // タスクの追加が成功したら、状態を更新してタスク追加完了メッセージを表示
+                setTaskAdded(true);
             })
             .catch(error => {
                 console.error('タスクの追加中にエラーが発生しました:', error);
@@ -36,6 +38,7 @@ const AddTaskPage = () => {
 
     return (
         <div>
+            {taskAdded && <div>タスクが保存されました！</div>} {/* タスクが保存されたらメッセージを表示 */}
             <h1>タスクの追加ページ</h1>
             <label>
                 薬の名前：
@@ -148,6 +151,7 @@ const AddTaskPage = () => {
 
             <button onClick={handleAddTask}>タスクを追加</button>
         </div>
+
     );
 };
 
