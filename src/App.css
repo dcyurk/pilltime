@@ -1,38 +1,107 @@
+/* App.css */
+
 .App {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0 auto;
+  padding: 20px;
+  max-width: 800px;
+}
+
+header {
+  background-color: #f8a5c2;
+  color: #fff;
+  padding: 20px 0;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+nav ul li {
+  display: inline;
+  margin-right: 20px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+nav ul li a:hover {
+  color: #f8a5c2;
+  background-color: #fff;
+  border-radius: 20px;
+  padding: 10px 20px;
+}
+
+.navbar {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.navbar-brand {
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #fff;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+
+/* 文字置き換え */
+.rbc-btn-group>button {
+  font-size: 0px;
+  /* ボタン内のテキストを非表示にする */
+}
+
+/* 今日ボタン */
+.rbc-btn-group:nth-child(1)>button:nth-child(1)::before {
+  font-size: 14px;
+  content: '今日';
+}
+
+/* 前へボタン */
+.rbc-btn-group:nth-child(1)>button:nth-child(2)::before {
+  font-size: 14px;
+  content: '←';
+}
+
+/* 次へボタン */
+.rbc-btn-group:nth-child(1)>button:nth-child(3)::before {
+  font-size: 14px;
+  content: '→';
+}
+
+/* 月ボタン */
+.rbc-btn-group:nth-child(3)>button:nth-child(1)::before {
+  font-size: 14px;
+  content: '月';
+}
+
+/* 週ボタン */
+.rbc-btn-group:nth-child(3)>button:nth-child(2)::before {
+  font-size: 14px;
+  content: '週';
+}
+
+/* 日ボタン */
+.rbc-btn-group:nth-child(3)>button:nth-child(3)::before {
+  font-size: 14px;
+  content: '日';
+}
+
+/* スケジュールボタン */
+.rbc-btn-group:nth-child(3)>button:nth-child(4)::before {
+  font-size: 14px;
+  content: 'スケジュール';
+}
+
+.selected {
+  background-color: lightblue;
 }
