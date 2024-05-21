@@ -74,7 +74,30 @@ const AddTaskPage = () => {
 
     const handleAddTask = () => {
         // タスクを追加する処理を実装する
+        const newTask = {
+            name: taskName,
+            unit,
+            frequency,
+            selectedDays,
+            selectedTime,
+            selectedDosage,
+            intervalType,
+            intervalValue,
+            selectedFrequencyCount,
+            selectedTimes,
+        };
+
+        // 新しいタスクをAPIに送信する
+        axios.post('http://localhost:8080/api/tasks', newTask)
+            .then(response => {
+                // タスクの追加が成功したら、ページを更新する
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('タスクの追加中にエラーが発生しました:', error);
+            });
     };
+
 
     return (
         <div>
