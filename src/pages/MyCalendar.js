@@ -1,7 +1,6 @@
-//MyCalendar.js
-
 import React from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
+import { useNavigate } from 'react-router-dom';
+import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment/locale/ja'; // 日本語ロケールをインポート
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -18,10 +17,27 @@ const formats = {
     dayRangeHeaderFormat: 'YYYY年M月',
 };
 
+const messages = {
+    noEventsInRange: 'この範囲にはイベントがありません。',
+    today: '今日',
+    previous: '前へ',
+    next: '次へ',
+    month: '月',
+    week: '週',
+    day: '日',
+    agenda: 'スケジュール',
+};
+
 const localizer = momentLocalizer(moment);
 
-const MyCalendar = ({ handleDateSelect }) => {
-    const [events, setEvents] = React.useState([]);
+const MyCalendar = () => {
+    const events = []; // 空のイベント配列
+    const navigate = useNavigate();
+
+    const handleDateSelect = (date) => {
+        const formattedDate = moment(date).format('YYYY-MM-DD');
+        navigate(`/day-details/${formattedDate}`);
+    };
 
     const customToolbar = (toolbar) => {
         const goToBack = () => {
@@ -39,38 +55,38 @@ const MyCalendar = ({ handleDateSelect }) => {
         return (
             <div className="rbc-toolbar">
                 <span className="rbc-btn-group">
-                    <button type="button" onClick={goToToday}>Today</button>
-                    <button type="button" onClick={goToBack}>Back</button>
-                    <button type="button" onClick={goToNext}>Next</button>
+                    <button type="button" onClick={goToToday}>今日</button>
+                    <button type="button" onClick={goToBack}>前へ</button>
+                    <button type="button" onClick={goToNext}>次へ</button>
                 </span>
                 <span className="rbc-btn-group">
                     <button
                         type="button"
-                        onClick={() => toolbar.onView('month')}
-                        disabled={toolbar.view === 'month'}
+                        onClick={() => toolbar.onView(Views.MONTH)}
+                        disabled={toolbar.view === Views.MONTH}
                     >
-                        Month
+                        月
                     </button>
                     <button
                         type="button"
-                        onClick={() => toolbar.onView('week')}
-                        disabled={toolbar.view === 'week'}
+                        onClick={() => toolbar.onView(Views.WEEK)}
+                        disabled={toolbar.view === Views.WEEK}
                     >
-                        Week
+                        週
                     </button>
                     <button
                         type="button"
-                        onClick={() => toolbar.onView('day')}
-                        disabled={toolbar.view === 'day'}
+                        onClick={() => toolbar.onView(Views.DAY)}
+                        disabled={toolbar.view === Views.DAY}
                     >
-                        Day
+                        日
                     </button>
                     <button
                         type="button"
-                        onClick={() => toolbar.onView('agenda')}
-                        disabled={toolbar.view === 'agenda'}
+                        onClick={() => toolbar.onView(Views.AGENDA)}
+                        disabled={toolbar.view === Views.AGENDA}
                     >
-                        Agenda
+                        スケジュール
                     </button>
                 </span>
             </div>
@@ -85,9 +101,12 @@ const MyCalendar = ({ handleDateSelect }) => {
                 startAccessor="start"
                 endAccessor="end"
                 style={{ height: 500 }}
+                selectable
                 onSelectSlot={(slotInfo) => handleDateSelect(slotInfo.start)}
                 formats={formats}
-                components={{ toolbar: customToolbar }} // ここでカスタムコンポーネントを渡す
+                components={{ toolbar: customToolbar }} // カスタムツールバーを指定
+                views={{ month: true, week: true, day: true, agenda: true }} // ビューを指定
+                messages={messages} // メッセージを指定
             />
         </div>
     );

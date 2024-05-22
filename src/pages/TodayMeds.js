@@ -1,17 +1,15 @@
-//TodayMeds.js
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const TodayMeds = () => {
     const [meds, setMeds] = useState([]);
     const [notificationSettings, setNotificationSettings] = useState({});
-    const [customMessages, setCustomMessages] = useState({
+    const customMessages = {
         'default': 'お薬を飲む時間です！',
         'mom': 'ハニー、お薬を忘れずに飲んでね！',
         'dad': 'チャンプ、お薬を飲む時間だ！',
         'cat': 'にゃー！お薬の時間だよ！'
-    });
+    };
 
     useEffect(() => {
         // お薬のデータを取得
